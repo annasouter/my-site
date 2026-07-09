@@ -5,61 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Anna Souter | Designer</title>
     <link rel="stylesheet" href="css/styles.css" />
-    <style>
-      .weather-card {
-        background: rgba(255, 255, 255, 0.96);
-        border: 1px solid rgba(109, 82, 255, 0.14);
-        border-radius: 28px;
-        padding: 1.8rem;
-        box-shadow: 0 24px 60px rgba(68, 58, 115, 0.08);
-        margin-top: 1.75rem;
-      }
-
-      .weather-card .weather-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 1rem;
-      }
-
-      .weather-card .weather-label {
-        margin: 0 0 0.5rem;
-        color: var(--accent);
-        text-transform: uppercase;
-        letter-spacing: 0.18em;
-        font-size: 0.75rem;
-        font-weight: 700;
-      }
-
-      .weather-card h3 {
-        margin: 0;
-        font-size: 1.125rem;
-        line-height: 1.3;
-      }
-
-      .weather-card .weather-icon {
-        font-size: 2.6rem;
-      }
-
-      .weather-card .weather-temp {
-        margin: 1.4rem 0 0.35rem;
-        font-size: clamp(2rem, 3vw, 2.6rem);
-        font-weight: 700;
-        line-height: 1;
-      }
-
-      .weather-card .weather-details {
-        margin: 0;
-        color: var(--muted);
-        line-height: 1.75;
-      }
-
-      .weather-card .weather-meta {
-        margin-top: 1rem;
-        color: rgba(30, 27, 47, 0.7);
-        font-size: 0.95rem;
-      }
-    </style>
+    
   </head>
   <body>
     <header class="container header">
@@ -73,7 +19,7 @@
       </nav>
       <section class="hero" id="home">
         <div class="hero-copy">
-          <p style="margin:0 0 1rem;font-weight:600;color:#6d52ff;letter-spacing:.12em;text-transform:uppercase;font-size:.82rem;">Designer portfolio</p>
+          <p class="hero-label">Designer portfolio</p>
           <h1>Beautiful, intentional design for creative brands.</h1>
           <p>
             I’m Anna — a designer who crafts polished visual systems, elegant websites,
@@ -186,101 +132,6 @@
       <p>Designed by Anna Souter · Crafted with calm, elevated style.</p>
     </footer>
 
-    <script>
-      const weatherCard = document.getElementById('weather-card');
-      const locationEl = document.getElementById('weather-location');
-      const iconEl = document.getElementById('weather-icon');
-      const tempEl = document.getElementById('weather-temp');
-      const descEl = document.getElementById('weather-description');
-      const metaEl = document.getElementById('weather-meta');
-
-      const conditionMap = {
-        0: { emoji: '☀️', label: 'Clear sky' },
-        1: { emoji: '🌤️', label: 'Mainly clear' },
-        2: { emoji: '⛅', label: 'Partly cloudy' },
-        3: { emoji: '☁️', label: 'Overcast' },
-        45: { emoji: '🌫️', label: 'Fog' },
-        48: { emoji: '🌫️', label: 'Depositing rime fog' },
-        51: { emoji: '🌦️', label: 'Light drizzle' },
-        53: { emoji: '🌦️', label: 'Moderate drizzle' },
-        55: { emoji: '🌦️', label: 'Dense drizzle' },
-        56: { emoji: '🌧️', label: 'Freezing drizzle' },
-        57: { emoji: '🌧️', label: 'Heavy freezing drizzle' },
-        61: { emoji: '🌧️', label: 'Light rain' },
-        63: { emoji: '🌧️', label: 'Moderate rain' },
-        65: { emoji: '🌧️', label: 'Heavy rain' },
-        66: { emoji: '🌧️', label: 'Freezing rain' },
-        67: { emoji: '🌧️', label: 'Heavy freezing rain' },
-        71: { emoji: '🌨️', label: 'Light snow' },
-        73: { emoji: '🌨️', label: 'Moderate snow' },
-        75: { emoji: '🌨️', label: 'Heavy snow' },
-        77: { emoji: '🌨️', label: 'Snow grains' },
-        80: { emoji: '🌧️', label: 'Rain showers' },
-        81: { emoji: '🌧️', label: 'Heavy rain showers' },
-        82: { emoji: '⛈️', label: 'Violent rain showers' },
-        85: { emoji: '❄️', label: 'Snow showers' },
-        86: { emoji: '❄️', label: 'Heavy snow showers' },
-        95: { emoji: '⛈️', label: 'Thunderstorm' },
-        96: { emoji: '⛈️', label: 'Thunderstorm with hail' },
-        99: { emoji: '⛈️', label: 'Severe thunderstorm with hail' },
-      };
-
-      function getCondition(code) {
-        return conditionMap[code] || { emoji: '🌥️', label: 'Unknown conditions' };
-      }
-
-      function showError(message) {
-        locationEl.textContent = 'Weather unavailable';
-        iconEl.textContent = '⚠️';
-        tempEl.textContent = '--°F';
-        descEl.textContent = message;
-        metaEl.textContent = 'Try again or allow location access.';
-      }
-
-      function updateWeather({ latitude, longitude }) {
-        const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true&temperature_unit=fahrenheit`;
-
-        fetch(url)
-          .then((response) => {
-            if (!response.ok) throw new Error('Weather fetch failed');
-            return response.json();
-          })
-          .then((data) => {
-            const weather = data.current_weather;
-            if (!weather) throw new Error('No current weather data');
-
-            const condition = getCondition(weather.weathercode);
-            const temp = Math.round(weather.temperature);
-            const direction = weather.winddirection;
-
-            locationEl.textContent = 'Your location';
-            iconEl.textContent = condition.emoji;
-            tempEl.textContent = `${temp}°F`;
-            descEl.textContent = condition.label;
-            metaEl.textContent = `Wind ${direction}° · Updated just now`;
-          })
-          .catch((error) => {
-            console.error(error);
-            showError('Unable to load weather');
-          });
-      }
-
-      if ('geolocation' in navigator) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            const { latitude, longitude } = position.coords;
-            updateWeather({ latitude, longitude });
-          },
-          (error) => {
-            console.warn(error);
-            showError('Enable location to see the location.');
-            metaEl.textContent = 'Allow location access to show local weather.';
-          },
-          { enableHighAccuracy: false, timeout: 10000 }
-        );
-      } else {
-        showError('Geolocation is not supported in this browser.');
-      }
-    </script>
+    <script src="app.js"></script>
   </body>
 </html>
