@@ -1,9 +1,10 @@
-const weatherCard = document.getElementById('weather-card');
 const locationEl = document.getElementById('weather-location');
 const iconEl = document.getElementById('weather-icon');
 const tempEl = document.getElementById('weather-temp');
 const descEl = document.getElementById('weather-description');
 const metaEl = document.getElementById('weather-meta');
+
+const DEFAULT_COORDINATES = { latitude: 40.7128, longitude: -74.006 };
 
 const conditionMap = {
   0: { emoji: '☀️', label: 'Clear sky' },
@@ -40,15 +41,15 @@ function getCondition(code) {
   return conditionMap[code] || { emoji: '🌥️', label: 'Unknown conditions' };
 }
 
-function showError(message) {
+function showError(message, detail = 'Try again or allow location access.') {
   locationEl.textContent = 'Weather unavailable';
   iconEl.textContent = '⚠️';
   tempEl.textContent = '--°F';
   descEl.textContent = message;
-  metaEl.textContent = 'Try again or allow location access.';
+  metaEl.textContent = detail;
 }
 
-function updateWeather({ latitude, longitude }) {
+function updateWeather({ latitude, longitude }, statusMessage = '') {
   const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true&temperature_unit=fahrenheit`;
 
   fetch(url)
@@ -68,11 +69,11 @@ function updateWeather({ latitude, longitude }) {
       iconEl.textContent = condition.emoji;
       tempEl.textContent = `${temp}°F`;
       descEl.textContent = condition.label;
-      metaEl.textContent = `Wind ${direction}° · Updated just now`;
+      metaEl.textContent = statusMessage || `Wind ${direction}° · Updated just now`;
     })
     .catch((error) => {
       console.error(error);
-      showError('Unable to load weather');
+      showError('Unable to load weather', 'The weather service is unavailable right now.');
     });
 }
 
@@ -84,11 +85,10 @@ if ('geolocation' in navigator) {
     },
     (error) => {
       console.warn(error);
-      showError('Enable location to see the location.');
-      metaEl.textContent = 'Allow location access to show local weather.';
+      updateWeather(DEFAULT_COORDINATES, 'Using a default location because location access was unavailable.');
     },
     { enableHighAccuracy: false, timeout: 10000 }
   );
 } else {
-  showError('Geolocation is not supported in this browser.');
+  updateWeather(DEFAULT_COORDINATES, 'Using a default location because geolocation is unavailable in this browser.');
 }
